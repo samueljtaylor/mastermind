@@ -1,0 +1,31 @@
+#!/usr/bin/env php
+
+<?php
+
+if (file_exists(__DIR__.'/../../autoload.php')) {
+    require __DIR__.'/../../autoload.php';
+} else {
+    require __DIR__.'/vendor/autoload.php';
+}
+
+use Symfony\Component\Console\Application;
+
+$app = new Application();
+
+// Automatically register all commands in the commands folder
+foreach(glob(__DIR__.'/src/Commands/*.php') as $file) {
+    $lines = explode(PHP_EOL, file_get_contents($file));
+    foreach($lines as $line) {
+        if(strpos($line, 'namespace') !== false) {
+            $namespace = preg_replace('/^namespace /', '', substr($line, 0, -1));
+            break;
+        }
+    }
+    $exploded = explode('/', $file);
+    $className = substr(end($exploded), 0, -4);
+    $class = $namespace . '\\' . $className;
+
+    $app->add(new $class);
+}
+
+$app->run();

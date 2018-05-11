@@ -1,8 +1,14 @@
 <?php
 
-
 namespace SamTaylor\MasterMind;
 
+/**
+ * MasterMind Solver Class
+ *
+ * Refactored for PHP from https://github.com/Michael0x2a/mastermind-solver
+ *
+ * @package SamTaylor\MasterMind
+ */
 class Solver
 {
     /**

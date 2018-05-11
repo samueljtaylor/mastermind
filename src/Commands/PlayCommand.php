@@ -11,13 +11,22 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class PlayCommand extends Command
 {
+    /**
+     * @var Game
+     */
     protected $game;
 
+    /**
+     * @inheritDoc
+     */
     protected function configure()
     {
         $this->setName('play:solve');
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->game = new Game();

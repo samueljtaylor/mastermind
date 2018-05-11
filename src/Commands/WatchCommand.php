@@ -14,12 +14,18 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class WatchCommand extends Command
 {
 
+    /**
+     * @inheritDoc
+     */
     protected function configure()
     {
         $this->setName('watch');
         $this->addOption('set-answer', null, InputOption::VALUE_REQUIRED);
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input, $output);

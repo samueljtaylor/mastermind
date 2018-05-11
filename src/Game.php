@@ -4,31 +4,67 @@ namespace SamTaylor\MasterMind;
 
 use Tightenco\Collect\Support\Collection;
 
+/**
+ * MasterMind Game
+ *
+ * @package SamTaylor\MasterMind
+ */
 class Game
 {
+    /**
+     * Debug mode
+     *
+     * @var bool
+     */
     public $debug;
 
     /**
+     * Valid Choices
+     *
      * @var Collection
      */
     public $choices;
 
+    /**
+     * Number of paces
+     *
+     * @var int
+     */
     public $spaces;
 
+    /**
+     * Every space should have a unique value
+     *
+     * ie: [1,2,3,4] is unique | [1,1,2,3] is not
+     *
+     * @var bool
+     */
     public $unique;
 
     /**
+     * All the guesses in this game
+     *
      * @var Collection
      */
     public $guesses;
 
     /**
+     * The answer
+     *
      * @var Collection
      */
     private $answer;
 
+    /**
+     * Game has been solved
+     *
+     * @var bool
+     */
     public $correct = false;
 
+    /**
+     * Game constructor.
+     */
     public function __construct()
     {
         $config = new Config();
@@ -42,6 +78,9 @@ class Game
         $this->generate();
     }
 
+    /**
+     * Generate an answer
+     */
     public function generate()
     {
         $answer = collect();
@@ -60,6 +99,12 @@ class Game
         $this->answer = $answer;
     }
 
+    /**
+     * Validate a guess
+     *
+     * @param array|string|null $guess
+     * @return array
+     */
     public function guess($guess)
     {
         if($guess === null) {
@@ -99,7 +144,6 @@ class Game
             }
         }
 
-
         foreach($incorrect->all() as $index => $value) {
             if($value !== null) {
                 $foundIndex = $found->search($value);
@@ -111,26 +155,20 @@ class Game
             }
         }
 
-        $response = [
+        $this->guesses->push([
             implode(' | ', $guess->all()),
             $numCorrect,
             $numClose,
-        ];
-
-        $this->guesses->push($response);
-
-        if($numCorrect === 4) {
-            $this->correct = true;
-        }
+        ]);
 
         return [ $numCorrect, $numClose ];
     }
 
-    public function answerHasDuplicates()
-    {
-        return $this->answer->count() > $this->answer->unique()->count();
-    }
-
+    /**
+     * Get the answer
+     *
+     * @return array
+     */
     public function getAnswer()
     {
         if($this->debug) {
@@ -139,6 +177,12 @@ class Game
         return null;
     }
 
+    /**
+     * Set the answer
+     *
+     * @param array|string $answer
+     * @return bool
+     */
     public function setAnswer($answer)
     {
         if($this->debug) {
@@ -151,6 +195,11 @@ class Game
         return false;
     }
 
+    /**
+     * Debug Dumper
+     *
+     * @param mixed ...$args
+     */
     public function debug(...$args)
     {
         if($this->debug) {

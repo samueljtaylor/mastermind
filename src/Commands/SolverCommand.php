@@ -12,11 +12,17 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class SolverCommand extends Command
 {
+    /**
+     * @inheritDoc
+     */
     protected function configure()
     {
         $this->setName('play:computer');
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input, $output);

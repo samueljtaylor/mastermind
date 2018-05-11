@@ -35,7 +35,7 @@ class SolverCommand extends Command
                 break;
             }
 
-            $solver->setFilterGuessPool($solver->pool, $guess);
+            $solver->newFilteredPool($guess);
             $io->text(count($solver->pool) . ' possibilities. I\'m thinking...');
             $io->newLine();
 

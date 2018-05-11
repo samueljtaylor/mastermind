@@ -58,8 +58,8 @@ class WatchCommand extends Command
                 break;
             }
 
-            $solver->setFeedback($feedback[0], $feedback[1]);
-            $solver->setFilterGuessPool($solver->pool, $guess);
+            $solver->setFeedback($feedback);
+            $solver->newFilteredPool($guess);
 
             $io->text(count($solver->pool) . ' possibilities, selecting the best guess...');
 

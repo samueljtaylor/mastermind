@@ -5,19 +5,47 @@ namespace SamTaylor\MasterMind;
 
 class Solver
 {
+    /**
+     * Debug mode
+     *
+     * @var bool
+     */
     public $debug;
 
+    /**
+     * Valid choices
+     *
+     * @var array
+     */
     public $choices;
 
+    /**
+     * Number of spaces
+     *
+     * @var int
+     */
     public $spaces;
 
+    /**
+     * Guess pool (all possible answers)
+     *
+     * @var array
+     */
     public $pool = [];
 
+    /**
+     * Current feedback from guess
+     *
+     * @var array
+     */
     public $feedback = [
         'correct' => 0,
         'close' => 0,
     ];
 
+    /**
+     * Solver constructor.
+     */
     public function __construct()
     {
         $config = new Config();
@@ -29,13 +57,26 @@ class Solver
         $this->buildGuessPool();
     }
 
-    public function setFeedback($correct, $close)
+    /**
+     * Set the feedback
+     *
+     * @param mixed $correct
+     * @param int $close
+     */
+    public function setFeedback($correct, $close = null)
     {
-
-        $this->feedback['correct'] = $correct;
-        $this->feedback['close'] = $close;
+        if(gettype($correct) === 'array') {
+            $this->feedback['correct'] = $correct[0];
+            $this->feedback['close'] = $correct[1];
+        } else {
+            $this->feedback['correct'] = $correct;
+            $this->feedback['close'] = $close;
+        }
     }
 
+    /**
+     * Build the possible guesses
+     */
     public function buildGuessPool()
     {
         $cartesian = [];
@@ -50,7 +91,9 @@ class Solver
     }
 
     /**
-     * @param $input
+     * Cartesian product
+     *
+     * @param array $input
      * @return array
      * @see https://stackoverflow.com/a/15973172
      */
@@ -76,6 +119,11 @@ class Solver
         return $result;
     }
 
+    /**
+     * Generate an initial guess
+     *
+     * @return array
+     */
     public function initialGuess()
     {
         $guess = [];
@@ -92,6 +140,11 @@ class Solver
         return $guess;
     }
 
+    /**
+     * Generate a guess
+     *
+     * @return array
+     */
     public function makeGuess()
     {
 
@@ -109,12 +162,24 @@ class Solver
         return $choice;
     }
 
-    public function setFilterGuessPool($pool, $guess)
+    /**
+     * Filter pool for a guess
+     *
+     * @param array $guess
+     */
+    public function newFilteredPool($guess)
     {
 
-        $this->pool = $this->filterGuessPool($pool, $guess);
+        $this->pool = $this->filterGuessPool($this->pool, $guess);
     }
 
+    /**
+     * Filter the guess pool
+     *
+     * @param array $pool
+     * @param array $guess
+     * @return array
+     */
     public function filterGuessPool($pool, $guess)
     {
 
@@ -128,6 +193,13 @@ class Solver
         return $output;
     }
 
+    /**
+     * Find the number of correct
+     *
+     * @param array $actual
+     * @param array $guess
+     * @return int
+     */
     public function findCorrect($actual, $guess)
     {
 
@@ -141,6 +213,13 @@ class Solver
         return $correct;
     }
 
+    /**
+     * Find the number of close
+     *
+     * @param array $actual
+     * @param array $guess
+     * @return int
+     */
     public function findClose($actual, $guess)
     {
 
@@ -160,9 +239,15 @@ class Solver
         return $close;
     }
 
+    /**
+     * Remove the correct
+     *
+     * @param array $actual
+     * @param array $guess
+     * @return array
+     */
     public function removeCorrect($actual, $guess)
     {
-
         $newActual = [];
         $newGuess = [];
 
@@ -173,10 +258,16 @@ class Solver
             }
         }
 
-
         return [ $newActual, $newGuess ];
     }
 
+    /**
+     * Get feedback
+     *
+     * @param array $actual
+     * @param array $guess
+     * @return array
+     */
     public function getFeedback($actual, $guess)
     {
 
@@ -186,6 +277,13 @@ class Solver
         ];
     }
 
+    /**
+     * Is a match?
+     *
+     * @param array $guess
+     * @param array $item
+     * @return bool
+     */
     public function isMatch($guess, $item)
     {
 
@@ -193,11 +291,22 @@ class Solver
         return ($feedback['correct'] === $this->feedback['correct']) && ($feedback['close'] === $this->feedback['close']);
     }
 
+    /**
+     * __get
+     *
+     * @param string $name
+     * @return mixed
+     */
     public function __get($name)
     {
         return $this->$name;
     }
 
+    /**
+     * Debug dumper
+     *
+     * @param mixed ...$args
+     */
     public function debug(...$args)
     {
         if($this->debug) {

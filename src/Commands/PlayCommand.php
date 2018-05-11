@@ -35,10 +35,10 @@ class PlayCommand extends Command
 
         while(!$this->game->correct) {
             $io->section('Choices');
-            $io->text(implode(' | ', $this->game->choices));
+            $io->text(implode(' | ', $this->game->choices->all()));
 
             $cells = [];
-            foreach($this->game->guesses as $guess) {
+            foreach($this->game->guesses->all() as $guess) {
                 $cells[] = [
                     $guess[1],
                     $guess[0],
@@ -46,7 +46,7 @@ class PlayCommand extends Command
                 ];
             }
 
-            if(count($this->game->guesses) > 0) {
+            if($this->game->guesses->count()) {
                 $io->section('Guesses');
                 $io->table([ 'Correct', 'Guess', 'Close' ], $cells);
             }

@@ -2,7 +2,6 @@
 
 namespace SamTaylor\MasterMind\Commands;
 
-
 use SamTaylor\MasterMind\Game;
 use SamTaylor\MasterMind\Solver;
 use Symfony\Component\Console\Command\Command;

@@ -6,6 +6,7 @@ namespace SamTaylor\MasterMind\Commands;
 
 use SamTaylor\MasterMind\Solver;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -42,10 +43,19 @@ class SolverCommand extends Command
             }
 
             $solver->newFilteredPool($guess);
-            $io->text(count($solver->pool) . ' possibilities. I\'m thinking...');
+            $io->text('Analyzing possible options...');
             $io->newLine();
 
-            $guess = $solver->makeGuess();
+            $progress = new ProgressBar($output, count($solver->pool));
+            $progress->setFormat(' %current%/%max% [%bar%] %percent:3s%% %estimated:-6s%');
+
+            $progress->start();
+
+            $guess = $solver->makeGuess(function() use ($progress) {
+                $progress->advance();
+            });
+
+            $progress->finish();
         }
 
         $io->text('GOT IT');

@@ -5,6 +5,7 @@ namespace SamTaylor\MasterMind\Commands;
 use SamTaylor\MasterMind\Game;
 use SamTaylor\MasterMind\Solver;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -66,9 +67,18 @@ class WatchCommand extends Command
             $solver->setFeedback($feedback);
             $solver->newFilteredPool($guess);
 
-            $io->text(count($solver->pool) . ' possibilities, selecting the best guess...');
+            $io->text('Analyzing possible options...');
 
-            $guess = $solver->makeGuess();
+            $progress = new ProgressBar($output, count($solver->pool));
+            $progress->setFormat(' %current%/%max% [%bar%] %percent:3s%% %estimated:-6s%');
+
+            $progress->start();
+
+            $guess = $solver->makeGuess(function() use ($progress) {
+                $progress->advance();
+            });
+
+            $progress->finish();
         }
 
         if($game->correct) {

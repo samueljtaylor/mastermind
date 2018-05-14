@@ -150,9 +150,10 @@ class Solver
     /**
      * Generate a guess
      *
+     * @param \Closure|null $callback
      * @return array
      */
-    public function makeGuess()
+    public function makeGuess($callback = null)
     {
 
         $minLength = INF;
@@ -163,6 +164,9 @@ class Solver
             if($minLength > $length) {
                 $minLength = $length;
                 $choice = $item;
+            }
+            if($callback !== null) {
+                $callback();
             }
         }
 

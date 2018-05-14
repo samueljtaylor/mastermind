@@ -1,5 +1,5 @@
 {
-    "name": "taylornetwork/master-mind",
+    "name": "samtaylor/mastermind",
     "require": {
         "symfony/console": "^4.0",
         "php": ">=7.0.0",

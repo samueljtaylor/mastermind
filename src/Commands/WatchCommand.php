@@ -13,9 +13,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class WatchCommand extends Command
 {
-
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function configure()
     {
@@ -24,7 +23,7 @@ class WatchCommand extends Command
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -33,7 +32,7 @@ class WatchCommand extends Command
         $game = new Game();
         $solver = new Solver();
 
-        if($answer = $input->getOption('set-answer')) {
+        if ($answer = $input->getOption('set-answer')) {
             $game->debug = true;
             $game->verbosity = 0;
             $game->setAnswer($answer);
@@ -41,11 +40,11 @@ class WatchCommand extends Command
 
         $guess = $solver->initialGuess();
 
-        while(!$game->correct || count($solver->pool) > 0) {
+        while (!$game->correct || count($solver->pool) > 0) {
             $feedback = $game->guess($guess);
 
             $cells = [];
-            foreach($game->guesses as $previousGuess) {
+            foreach ($game->guesses as $previousGuess) {
                 $cells[] = [
                     $previousGuess[1],
                     $previousGuess[0],
@@ -53,12 +52,12 @@ class WatchCommand extends Command
                 ];
             }
 
-            if(count($game->guesses) > 0) {
-                $io->section('Guess #' . count($game->guesses));
-                $io->table([ 'Correct', 'Guess', 'Close' ], $cells);
+            if (count($game->guesses) > 0) {
+                $io->section('Guess #'.count($game->guesses));
+                $io->table(['Correct', 'Guess', 'Close'], $cells);
             }
 
-            if($feedback === [-1,-1]) {
+            if ($feedback === [-1, -1]) {
                 break;
             } elseif ($feedback === [$game->spaces, 0]) {
                 break;
@@ -74,25 +73,23 @@ class WatchCommand extends Command
 
             $progress->start();
 
-            $guess = $solver->makeGuess(function() use ($progress) {
+            $guess = $solver->makeGuess(function () use ($progress) {
                 $progress->advance();
             });
 
             $progress->finish();
         }
 
-        if($game->correct) {
+        if ($game->correct) {
             $io->success([
-                'SOLVED ON THE GUESS #' . count($game->guesses) . '!',
+                'SOLVED ON THE GUESS #'.count($game->guesses).'!',
                 '['.implode(', ', $guess).']',
             ]);
         } else {
             $io->error([
                 'COULD NOT SOLVE!',
-                'Correct answer: ['.implode(', ', $game->getAnswer()).']'
+                'Correct answer: ['.implode(', ', $game->getAnswer()).']',
             ]);
         }
-
     }
-
 }

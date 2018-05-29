@@ -2,11 +2,10 @@
 
 namespace SamTaylor\MasterMind;
 
-
 class Config
 {
     /**
-     * The config from config/config.php
+     * The config from config/config.php.
      *
      * @var array
      */
@@ -21,16 +20,16 @@ class Config
     }
 
     /**
-     * Get config
+     * Get config.
      *
      * @param string $key
+     *
      * @return mixed
      */
     public function get($key)
     {
-        if(array_key_exists($key, $this->config)) {
+        if (array_key_exists($key, $this->config)) {
             return $this->config[$key];
         }
-        return null;
     }
 }

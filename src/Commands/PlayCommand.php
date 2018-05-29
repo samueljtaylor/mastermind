@@ -2,7 +2,6 @@
 
 namespace SamTaylor\MasterMind\Commands;
 
-
 use SamTaylor\MasterMind\Game;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -17,7 +16,7 @@ class PlayCommand extends Command
     protected $game;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function configure()
     {
@@ -25,7 +24,7 @@ class PlayCommand extends Command
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -33,12 +32,12 @@ class PlayCommand extends Command
 
         $io = new SymfonyStyle($input, $output);
 
-        while(!$this->game->correct) {
+        while (!$this->game->correct) {
             $io->section('Choices');
             $io->text(implode(' | ', $this->game->choices->all()));
 
             $cells = [];
-            foreach($this->game->guesses->all() as $guess) {
+            foreach ($this->game->guesses->all() as $guess) {
                 $cells[] = [
                     $guess[1],
                     $guess[0],
@@ -46,14 +45,14 @@ class PlayCommand extends Command
                 ];
             }
 
-            if($this->game->guesses->count()) {
+            if ($this->game->guesses->count()) {
                 $io->section('Guesses');
-                $io->table([ 'Correct', 'Guess', 'Close' ], $cells);
+                $io->table(['Correct', 'Guess', 'Close'], $cells);
             }
 
             $response = $io->ask('Guess');
 
-            if($response === 'exit') {
+            if ($response === 'exit') {
                 $io->text('Exiting.');
                 break;
             }
@@ -61,9 +60,8 @@ class PlayCommand extends Command
             $this->game->guess($response);
         }
 
-        if($this->game->correct) {
+        if ($this->game->correct) {
             $io->success(['Correct Guess!']);
         }
     }
-
 }

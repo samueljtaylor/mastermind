@@ -3,51 +3,50 @@
 namespace SamTaylor\MasterMind;
 
 /**
- * MasterMind Solver Class
+ * MasterMind Solver Class.
  *
  * Refactored for PHP from Michael0x2a/mastermind-solver
  *
  * @see https://github.com/Michael0x2a/mastermind-solver
- * @package SamTaylor\MasterMind
  */
 class Solver
 {
     /**
-     * Debug mode
+     * Debug mode.
      *
      * @var bool
      */
     public $debug;
 
     /**
-     * Valid choices
+     * Valid choices.
      *
      * @var array
      */
     public $choices;
 
     /**
-     * Number of spaces
+     * Number of spaces.
      *
      * @var int
      */
     public $spaces;
 
     /**
-     * Guess pool (all possible answers)
+     * Guess pool (all possible answers).
      *
      * @var array
      */
     public $pool = [];
 
     /**
-     * Current feedback from guess
+     * Current feedback from guess.
      *
      * @var array
      */
     public $feedback = [
         'correct' => 0,
-        'close' => 0,
+        'close'   => 0,
     ];
 
     /**
@@ -60,19 +59,18 @@ class Solver
         $this->spaces = $config->get('spaces');
         $this->choices = $config->get('choices');
 
-
         $this->buildGuessPool();
     }
 
     /**
-     * Set the feedback
+     * Set the feedback.
      *
      * @param mixed $correct
-     * @param int $close
+     * @param int   $close
      */
     public function setFeedback($correct, $close = null)
     {
-        if(gettype($correct) === 'array') {
+        if (gettype($correct) === 'array') {
             $this->feedback['correct'] = $correct[0];
             $this->feedback['close'] = $correct[1];
         } else {
@@ -82,39 +80,40 @@ class Solver
     }
 
     /**
-     * Build the possible guesses
+     * Build the possible guesses.
      */
     public function buildGuessPool()
     {
         $cartesian = [];
 
-        for($i = 0; $i < $this->spaces; $i++) {
+        for ($i = 0; $i < $this->spaces; $i++) {
             $cartesian[] = $this->choices;
         }
 
         $this->pool = $this->cartesian($cartesian);
-
-
     }
 
     /**
-     * Cartesian product
+     * Cartesian product.
      *
      * @param array $input
+     *
      * @return array
+     *
      * @see https://stackoverflow.com/a/15973172
      */
-    public function cartesian($input) {
+    public function cartesian($input)
+    {
         // filter out empty values
         $input = array_filter($input);
 
-        $result = array(array());
+        $result = [[]];
 
         foreach ($input as $key => $values) {
-            $append = array();
+            $append = [];
 
-            foreach($result as $product) {
-                foreach($values as $item) {
+            foreach ($result as $product) {
+                foreach ($values as $item) {
                     $product[$key] = $item;
                     $append[] = $product;
                 }
@@ -127,7 +126,7 @@ class Solver
     }
 
     /**
-     * Generate an initial guess
+     * Generate an initial guess.
      *
      * @return array
      */
@@ -148,24 +147,24 @@ class Solver
     }
 
     /**
-     * Generate a guess
+     * Generate a guess.
      *
      * @param \Closure|null $callback
+     *
      * @return array
      */
     public function makeGuess($callback = null)
     {
-
         $minLength = INF;
         $choice = null;
 
-        foreach($this->pool as $index => $item) {
+        foreach ($this->pool as $index => $item) {
             $length = count($this->filterGuessPool($this->pool, $item));
-            if($minLength > $length) {
+            if ($minLength > $length) {
                 $minLength = $length;
                 $choice = $item;
             }
-            if($callback !== null) {
+            if ($callback !== null) {
                 $callback();
             }
         }
@@ -174,29 +173,28 @@ class Solver
     }
 
     /**
-     * Filter pool for a guess
+     * Filter pool for a guess.
      *
      * @param array $guess
      */
     public function newFilteredPool($guess)
     {
-
         $this->pool = $this->filterGuessPool($this->pool, $guess);
     }
 
     /**
-     * Filter the guess pool
+     * Filter the guess pool.
      *
      * @param array $pool
      * @param array $guess
+     *
      * @return array
      */
     public function filterGuessPool($pool, $guess)
     {
-
         $output = [];
-        foreach($pool as $index => $item) {
-            if($this->isMatch($guess, $item) && $item !== $guess) {
+        foreach ($pool as $index => $item) {
+            if ($this->isMatch($guess, $item) && $item !== $guess) {
                 $output[] = $item;
             }
         }
@@ -205,18 +203,18 @@ class Solver
     }
 
     /**
-     * Find the number of correct
+     * Find the number of correct.
      *
      * @param array $actual
      * @param array $guess
+     *
      * @return int
      */
     public function findCorrect($actual, $guess)
     {
-
         $correct = 0;
-        foreach($actual as $index => $item) {
-            if($item === $guess[$index]) {
+        foreach ($actual as $index => $item) {
+            if ($item === $guess[$index]) {
                 $correct++;
             }
         }
@@ -225,23 +223,23 @@ class Solver
     }
 
     /**
-     * Find the number of close
+     * Find the number of close.
      *
      * @param array $actual
      * @param array $guess
+     *
      * @return int
      */
     public function findClose($actual, $guess)
     {
-
         $removed = $this->removeCorrect($actual, $guess);
         $actual = $removed[0];
         $guess = $removed[1];
 
         $close = 0;
 
-        foreach($guess as $index => $item) {
-            if(in_array($item, $actual)) {
+        foreach ($guess as $index => $item) {
+            if (in_array($item, $actual)) {
                 unset($actual[array_search($item, $actual)]);
                 $close++;
             }
@@ -251,10 +249,11 @@ class Solver
     }
 
     /**
-     * Remove the correct
+     * Remove the correct.
      *
      * @param array $actual
      * @param array $guess
+     *
      * @return array
      */
     public function removeCorrect($actual, $guess)
@@ -262,29 +261,29 @@ class Solver
         $newActual = [];
         $newGuess = [];
 
-        foreach($actual as $index => $item) {
-            if($item !== $guess[$index]) {
+        foreach ($actual as $index => $item) {
+            if ($item !== $guess[$index]) {
                 $newActual[] = $item;
                 $newGuess[] = $guess[$index];
             }
         }
 
-        return [ $newActual, $newGuess ];
+        return [$newActual, $newGuess];
     }
 
     /**
-     * Get feedback
+     * Get feedback.
      *
      * @param array $actual
      * @param array $guess
+     *
      * @return array
      */
     public function getFeedback($actual, $guess)
     {
-
         return [
             'correct' => $this->findCorrect($actual, $guess),
-            'close' => $this->findClose($actual, $guess),
+            'close'   => $this->findClose($actual, $guess),
         ];
     }
 
@@ -293,19 +292,21 @@ class Solver
      *
      * @param array $guess
      * @param array $item
+     *
      * @return bool
      */
     public function isMatch($guess, $item)
     {
-
         $feedback = $this->getFeedback($item, $guess);
+
         return ($feedback['correct'] === $this->feedback['correct']) && ($feedback['close'] === $this->feedback['close']);
     }
 
     /**
-     * __get
+     * __get.
      *
      * @param string $name
+     *
      * @return mixed
      */
     public function __get($name)
@@ -314,15 +315,14 @@ class Solver
     }
 
     /**
-     * Debug dumper
+     * Debug dumper.
      *
      * @param mixed ...$args
      */
     public function debug(...$args)
     {
-        if($this->debug) {
+        if ($this->debug) {
             dump(...$args);
         }
     }
-
 }

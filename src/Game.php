@@ -5,35 +5,33 @@ namespace SamTaylor\MasterMind;
 use Tightenco\Collect\Support\Collection;
 
 /**
- * MasterMind Game
- *
- * @package SamTaylor\MasterMind
+ * MasterMind Game.
  */
 class Game
 {
     /**
-     * Debug mode
+     * Debug mode.
      *
      * @var bool
      */
     public $debug;
 
     /**
-     * Valid Choices
+     * Valid Choices.
      *
      * @var Collection
      */
     public $choices;
 
     /**
-     * Number of paces
+     * Number of paces.
      *
      * @var int
      */
     public $spaces;
 
     /**
-     * Every space should have a unique value
+     * Every space should have a unique value.
      *
      * ie: [1,2,3,4] is unique | [1,1,2,3] is not
      *
@@ -42,21 +40,21 @@ class Game
     public $unique;
 
     /**
-     * All the guesses in this game
+     * All the guesses in this game.
      *
      * @var Collection
      */
     public $guesses;
 
     /**
-     * The answer
+     * The answer.
      *
      * @var Collection
      */
     private $answer;
 
     /**
-     * Game has been solved
+     * Game has been solved.
      *
      * @var bool
      */
@@ -79,7 +77,7 @@ class Game
     }
 
     /**
-     * Generate an answer
+     * Generate an answer.
      */
     public function generate()
     {
@@ -88,11 +86,11 @@ class Game
         $choices = collect($this->choices->toArray());
         $choices->shuffle();
 
-        if($this->unique) {
+        if ($this->unique) {
             $answer = $choices->slice($this->choices->count() - $this->spaces);
         } else {
-            for($i = 0; $i < $this->spaces; $i++) {
-                $answer->push($choices->get(rand(0, count($choices)  - 1)));
+            for ($i = 0; $i < $this->spaces; $i++) {
+                $answer->push($choices->get(rand(0, count($choices) - 1)));
             }
         }
 
@@ -100,29 +98,29 @@ class Game
     }
 
     /**
-     * Validate a guess
+     * Validate a guess.
      *
      * @param array|string|null $guess
+     *
      * @return array
      */
     public function guess($guess)
     {
-        if($guess === null) {
+        if ($guess === null) {
             return [-1, -1];
         }
 
-        if(gettype($guess) === 'string') {
+        if (gettype($guess) === 'string') {
             $guess = collect(str_split(strtoupper($guess)));
-        } elseif(gettype($guess) === 'array') {
+        } elseif (gettype($guess) === 'array') {
             $guess = collect($guess);
         }
 
-        if($this->answer->all() === $guess->all()) {
+        if ($this->answer->all() === $guess->all()) {
             $this->guesses->push([
-                implode(' | ', $guess->all()), $this->spaces, 0
+                implode(' | ', $guess->all()), $this->spaces, 0,
             ]);
             $this->correct = true;
-
 
             return [$this->spaces, 0];
         }
@@ -135,8 +133,8 @@ class Game
         $incorrect = collect($guess->toArray());
         $found = collect($this->answer->toArray());
 
-        foreach($this->answer->all() as $index => $value) {
-            if($value === $guess->get($index)) {
+        foreach ($this->answer->all() as $index => $value) {
+            if ($value === $guess->get($index)) {
                 $correct->put($index, $value);
                 $incorrect->put($index, null);
                 $found->put($index, null);
@@ -144,10 +142,10 @@ class Game
             }
         }
 
-        foreach($incorrect->all() as $index => $value) {
-            if($value !== null) {
+        foreach ($incorrect->all() as $index => $value) {
+            if ($value !== null) {
                 $foundIndex = $found->search($value);
-                if($foundIndex !== false) {
+                if ($foundIndex !== false) {
                     $found->put($foundIndex, null);
                     $close->push($value);
                     $numClose++;
@@ -161,48 +159,50 @@ class Game
             $numClose,
         ]);
 
-        return [ $numCorrect, $numClose ];
+        return [$numCorrect, $numClose];
     }
 
     /**
-     * Get the answer
+     * Get the answer.
      *
      * @return array
      */
     public function getAnswer()
     {
-        if($this->debug) {
+        if ($this->debug) {
             return $this->answer->all();
         }
-        return null;
     }
 
     /**
-     * Set the answer
+     * Set the answer.
      *
      * @param array|string $answer
+     *
      * @return bool
      */
     public function setAnswer($answer)
     {
-        if($this->debug) {
-            if(gettype($answer) === 'string') {
+        if ($this->debug) {
+            if (gettype($answer) === 'string') {
                 $answer = str_split($answer);
             }
             $this->answer = collect($answer);
+
             return true;
         }
+
         return false;
     }
 
     /**
-     * Debug Dumper
+     * Debug Dumper.
      *
      * @param mixed ...$args
      */
     public function debug(...$args)
     {
-        if($this->debug) {
+        if ($this->debug) {
             dump(...$args);
         }
     }

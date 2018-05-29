@@ -1,8 +1,6 @@
 <?php
 
-
 namespace SamTaylor\MasterMind\Commands;
-
 
 use SamTaylor\MasterMind\Solver;
 use Symfony\Component\Console\Command\Command;
@@ -14,7 +12,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class SolverCommand extends Command
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function configure()
     {
@@ -22,7 +20,7 @@ class SolverCommand extends Command
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -31,14 +29,14 @@ class SolverCommand extends Command
         $solver = new Solver();
         $guess = $solver->initialGuess();
 
-        while(true) {
+        while (true) {
             $io->text('['.implode(', ', $guess).']');
             $correct = (int) $io->ask('How many correct?');
             $close = (int) $io->ask('How many close?');
 
             $solver->setFeedback($correct, $close);
 
-            if($solver->feedback['correct'] === $solver->spaces) {
+            if ($solver->feedback['correct'] === $solver->spaces) {
                 break;
             }
 
@@ -51,7 +49,7 @@ class SolverCommand extends Command
 
             $progress->start();
 
-            $guess = $solver->makeGuess(function() use ($progress) {
+            $guess = $solver->makeGuess(function () use ($progress) {
                 $progress->advance();
             });
 

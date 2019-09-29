@@ -54,7 +54,7 @@ class SolverCommand extends Command
             });
 
             $progress->finish();
-            
+
             $io->text(PHP_EOL);
         }
 

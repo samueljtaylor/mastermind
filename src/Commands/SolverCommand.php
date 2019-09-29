@@ -54,8 +54,10 @@ class SolverCommand extends Command
             });
 
             $progress->finish();
+            
+            $io->text(PHP_EOL);
         }
 
-        $io->text('GOT IT');
+        $io->text('Solved!');
     }
 }
